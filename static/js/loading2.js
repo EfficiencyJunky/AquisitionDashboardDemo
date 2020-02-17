@@ -1,0 +1,1 @@
+d3.selectAll("#linegraph").html("<br><br><h1 style='text-align:center'> LOADING DATA 2/3...</h1><br><br>");
