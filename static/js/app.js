@@ -479,12 +479,13 @@ function lineChartWithMetricsChoices() {
     let trace = {
       x: [revenueCutoffDate, revenueCutoffDate],
       y: [0, yAxisMaxVal],
+      // name: "8 Days Ago",
       name: "8 Days Ago",
       // name: advertiser_shortname_lookup[advertiser] + " " + metric,
       // text: "testing",
       mode: 'lines',
-      hovertext: moment(revenueCutoffDate).format('ddd, MM/DD'),
-      hoverinfo: 'text+name', //will display the hovertext next to the name
+      hovertext: "<b>Trial Conversion Window</b><br>(revenue may be low after)<br>" + moment(revenueCutoffDate).format('ddd, MM/DD'),
+      hoverinfo: 'text', //will display the hovertext next to the name
       // hoverinfo: 'x+y+name',
       // size: tempChartData.installs.map( (value) => {
       //   if(value < 10){
