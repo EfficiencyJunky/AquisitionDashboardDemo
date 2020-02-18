@@ -11,14 +11,14 @@ let scale_down_last_8_days_revenue = true;
 
 // console.log("this is the beginning " );
 let advertiser_info = {
-  "Facebook Ads":       {"name": "FB",      "color": "blue"},
-  "pinterest_int":      {"name": "PINT",    "color": "red"},
-  "snapchat_int":       {"name": "SNAP",    "color": "orange"},
-  // "liftoff_int":        {"name": "LIFT",    "color": "cyan"},
-  "googleadwords_int":  {"name": "GOOG",    "color": "brown"},
-  "Apple Search Ads":   {"name": "ASA",     "color": "grey"},
-  "Aggregate Paid":     {"name": "AGG",     "color": "black"},
-  "Organic":            {"name": "Organic", "color": "green"}
+  "Facebook Ads":       {"name": "FB",      "color": "blue",          "ltv_color": "blue",                  "ltv_opacity": 0.35},
+  "pinterest_int":      {"name": "PINT",    "color": "red",           "ltv_color": "red",                   "ltv_opacity": 0.35},
+  "snapchat_int":       {"name": "SNAP",    "color": "darkorange",    "ltv_color": "darkorange",            "ltv_opacity": 0.35},
+  // "liftoff_int":        {"name": "LIFT",    "color": "cyan",       "ltv_color": "cyan",                  "ltv_opacity": 0.35},
+  "googleadwords_int":  {"name": "GOOG",    "color": "saddlebrown",   "ltv_color": "saddlebrown",           "ltv_opacity": 0.35},  
+  "Apple Search Ads":   {"name": "ASA",     "color": "grey",          "ltv_color": "grey",                  "ltv_opacity": 0.35},
+  "Aggregate Paid":     {"name": "AGG",     "color": "black",         "ltv_color": "rgba(255, 0, 0, 0.6)",  "ltv_opacity": 1.0},
+  "Organic":            {"name": "Organic", "color": "green",         "ltv_color": "rgba(255, 0, 0, 0.6)",  "ltv_opacity": 1.0}
 };
 
 let all_possible_advertisers = Object.keys(advertiser_info).filter(d => d != "Aggregate Paid");
@@ -154,70 +154,97 @@ function buildCharts() {
   
 }
 
+// *********************************************************************
+// abracadabra comparison chart
 function comparisonChart() {
 
+  let paid_advertisers_to_use = ["Aggregate Paid"];
+  
+  if(displayAggregateAdvertisers === false && using_flask_app === false){
+    paid_advertisers_to_use = Object.keys(comparison_data).filter( x => x !== "Aggregate Paid");
+  }
+  // console.log(paid_advertisers_to_use);
+  
   let traces = [];
-      
-  let trace = {
-    x: getComparisonChartXValues("actual"),
-    y: getComparisonChartYValues("actual"), 
-    name: "Actual Revenue",
-    text: comparison_data.date,
-    mode: 'markers',
-    marker: {
-      color: 'rgba(0, 0, 255, 0.6)',
-      size: 10
-    }
-  };
 
-  if(showLTVPerTrial){
-
-    let trace_ltv = {
-      x: getComparisonChartXValues("LTV"),
-      y: getComparisonChartYValues("LTV"),
-      name: "LTV $" + customLTV,
-      text: comparison_data.date,
+  paid_advertisers_to_use.map( paid_advertiser => {
+    let trace = {
+      // "actual" means it will return a trace with the real revenue values
+      // "LTV" means it will calculate the revenue based off of
+      // the number of trial starts and the given LTV value
+      x: getComparisonChartXValues(comparison_data[paid_advertiser], "actual"),
+      y: getComparisonChartYValues(comparison_data[paid_advertiser], "actual"), 
+      // name: paid_advertiser,
+      name: advertiser_info[paid_advertiser].name,
       mode: 'markers',
       marker: {
-        color: 'rgba(255, 0, 0, 0.6)',
-        // color: "red",
+        // color: 'rgba(0, 0, 255, 0.6)',
+        color: advertiser_info[paid_advertiser].color,
         size: 10
       }
     };
 
-    traces.push(trace_ltv);
-  }
+    traces.push(trace);
 
-  traces.push(trace);
+    if(showLTVPerTrial){
+        let trace_ltv = {
+          // "LTV" means it will calculate the revenue based off of 
+          // the number of trial starts and the given LTV value
+          x: getComparisonChartXValues(comparison_data[paid_advertiser], "LTV"),
+          y: getComparisonChartYValues(comparison_data[paid_advertiser], "LTV"),
+          name: advertiser_info[paid_advertiser].name + " LTV $" + customLTV,
+          text: comparison_data[paid_advertiser].date,
+          mode: 'markers',
+          marker: {
+            color: advertiser_info[paid_advertiser].ltv_color,
+            opacity: advertiser_info[paid_advertiser].ltv_opacity,
+            size: 10
+          }
+        };
+  
+        traces.push(trace_ltv);
+    }
 
+    
+  });
+
+
+  // traces.push(trace);
+
+  // add lines to the chart for "break even and 112% ROI"
   if(comparisonChartType == "spend_vs_revenue"){
     
-    let max_x_val = Math.max(...trace.x);
+    let max_val_for_each_trace = traces.map(trace => {
+      return Math.max(...trace.x);
+    });
+
+    let max_x_val = Math.max(...max_val_for_each_trace);
 
     let trace2 = {
       x: [0, max_x_val],
       y: [0, max_x_val],
       name: "Break Even",
+      hoverinfo: 'name',
       mode: 'lines',
       line: {
         color: "orange"
       }
     };
-
-    let trace3 = {
-      x: [0, max_x_val],
-      y: [0, max_x_val * 1.12],
-      name: "112% GM",
-      mode: 'lines',
-      fill: 'tonexty',
-      fillcolor: 'rgba(255, 165, 0, 0.3)',
-      line: {
-        color: "green"
-      }
-    };    
-
     traces.push(trace2);
-    traces.push(trace3);
+
+    // let trace3 = {
+    //   x: [0, max_x_val],
+    //   y: [0, max_x_val * 1.12],
+    //   name: "112% ROI",
+    //   hoverinfo: 'name',
+    //   mode: 'lines',
+    //   fill: 'tonexty',
+    //   fillcolor: 'rgba(255, 165, 0, 0.3)',
+    //   line: {
+    //     color: "green"
+    //   }
+    // };
+    // traces.push(trace3);
 
   }
 
@@ -242,6 +269,8 @@ function comparisonChart() {
 
 }
 
+
+// **********************************************************************
 // MAIN OVERTIME LINE GRAPH
 function lineChartWithMetricsChoices() {
 
@@ -1049,7 +1078,7 @@ function makeAPICall(api_call){
       chartdata = data[0];
       chartdata_aggregate = data[1]; // includes separate group for Organics
       let table_data = data[2]; // data formated for the table view
-      comparison_data = data[3]; // removes separate group for Organics from "chartdata_aggregate"
+      comparison_data = {"Aggregate Paid": data[3]}; // removes separate group for Organics from "chartdata_aggregate"
       gc_data = data[4];
 
       buildCharts();
@@ -1292,34 +1321,59 @@ function generateTableData(){
 }
 
 
-
-
-// remove ORGANICS from ComparisonData
+// all this really does is remove ORGANICS from the "chartdata_aggregate"
+// and also whittles down the number of metrics we keep in the dataset
 function generateComparisonChartData(){
-      
-      // need to find the indexes where the advertiser is set to "Aggregate Paid" (as opposed to "Organic Data")
-      // this will allow us to filter out all organic data for the "comparison_data"
-      let indexes_to_keep = chartdata_aggregate.advertiser.map((d) => {
-        return (d === "Aggregate Paid");
-      });
-      
-      // create a new dictionary to load data into
-      let chartdata_aggregate_without_organics = {};
 
-      // get the keys of the dictionary so we can iterate through them and load the new dictionary with the same keys
-      let chartdata_aggregate_keys = Object.keys(chartdata_aggregate);
+      let all_comparison_chart_data = {};
+      // we actually only need these keys to be in the dictionary 
+      // because for the comparison chart, these are the only metrics we use
+      let keys_to_keep = ["date", "spend", "trial_starts_all", "ltv_subs_all", "ltv_subs_revenue"];
 
-      // load the "chartdata_aggregate_without_organics" dictionary with only the data we want from each key's list of data
-      for (key of chartdata_aggregate_keys){
-        chartdata_aggregate_without_organics[key] = chartdata_aggregate[key].filter((d,i) => {
-          return indexes_to_keep[i];
-          // we could use this line of code and eliminate the need for creating the "indexes_to_keep" list.
-          // but it would be slightly more confusing as to what we are doing and only save a little time.
-          // return (chartdata_aggregate.advertiser[i] === "Aggregate Paid");
+      // we want to run the following operations for both the regular chartdata AND the aggregate
+      // that way we can pull either the single advertiser's information, or the aggregate data in the
+      // comparisonChart() function where we actually generate the chart
+      [chartdata, chartdata_aggregate].map( data_to_use => {
+        // find all the advertisers selected that are not Organic
+        let unique_paid_advertisers = data_to_use.advertiser.filter( onlyUnique ).filter( x => x !== "Organic");
+
+        // in the case that Android is the only OS chosen, we want to only allow certain advertisers
+        if(advertisers_chosen.length === 1 && advertisers_chosen.includes("ANDROID")){
+          unique_paid_advertisers = unique_paid_advertisers.filter(x => ["Facebook Ads", "pinterest_int", "snapchat_int"].includes(x));
+        }
+
+        // for all the advertisers selected, create a dictionary with each advertiser as a top level key
+        // then the value of that key will be the information needed for the chart series for that advertiser
+        unique_paid_advertisers.map((advertiser,i) => {
+          // create a new dictionary to load data into
+          let advertiser_comparison_data = {};
+
+          // load the "advertiser_comparison_data" dictionary with only the date and metrics (keys) we care about for comparison charts
+          for (key of keys_to_keep){
+            advertiser_comparison_data[key] = data_to_use[key].filter((d,i) => {
+              // return indexes_of_data_to_keep[i];
+              // we could use this line of code and eliminate the need for creating the "indexes_of_data_to_keep" list.
+              // but it would be slightly more confusing as to what we are doing and only save a little time.
+              return (data_to_use.advertiser[i] === advertiser);
+            });
+          }
+
+          all_comparison_chart_data[advertiser] = advertiser_comparison_data;
+
         });
-      }
+      });
 
-      return chartdata_aggregate_without_organics;
+      // THE FINAL DICTIONARY WILL LOOK LIKE THIS
+      //{
+      // date: ["2020-02-10", "2020-02-11", etc.....]
+      // advertiser: ["Aggregate Paid", "Aggregate Paid", etc.....]
+      // spend: [1460.83, 1168.31, etc.....]
+      // trial_starts_all: [101, 81, etc.....]
+      // ltv_subs_all: [10, 2, etc.....]
+      // ltv_subs_revenue: [475.2760479755903, 134.31296573571356, etc.....]
+      //}
+
+      return all_comparison_chart_data;
 }
 
 function getDataBlobAtIndex(data_blob_index){
@@ -1959,7 +2013,7 @@ function getOvertimeGraphXValues(data, series, advertiser) {
 }
 
 
-function getComparisonChartXValues(return_dataset){
+function getComparisonChartXValues(data_set, return_ltv_or_actual){
 
   let xAxisValues = [];
   let xAxisLTVValues = [];
@@ -1967,31 +2021,31 @@ function getComparisonChartXValues(return_dataset){
   switch (comparisonChartType) {
     case "spend_vs_roi":
     case "spend_vs_revenue":
-    case "spend_vs_gm":
-        xAxisValues = comparison_data.spend;
-        xAxisLTVValues = comparison_data.spend;
+    case "spend_vs_gm": // x values are just spend
+        xAxisValues = data_set.spend;
+        xAxisLTVValues = data_set.spend;
       break;
     // case "spend_vs_gm":
-    //     xAxisValues = comparison_data.ltv_subs_revenue.map((revenue, i) => {
-    //     return numberWithCommas((revenue - comparison_data.spend[i]).toFixed(2));
+    //     xAxisValues = data_set.ltv_subs_revenue.map((revenue, i) => {
+    //     return numberWithCommas((revenue - data_set.spend[i]).toFixed(2));
     //   });
     //   // console.log("is movingaverage checked?", isChecked);
     //   break;
-    case "gm_vs_roi":
-        xAxisValues = comparison_data.ltv_subs_revenue.map((revenue, i) => {
-          return numberWithCommas((revenue - comparison_data.spend[i]).toFixed(2));
+    case "gm_vs_roi": // x values are just the gross margin
+        xAxisValues = data_set.ltv_subs_revenue.map((revenue, i) => {
+          return numberWithCommas((revenue - data_set.spend[i]).toFixed(2));
         });
 
-        xAxisLTVValues = comparison_data.trial_starts_all.map((trials, i) => {
-          return numberWithCommas(((trials * customLTV) - comparison_data.spend[i]).toFixed(2));
+        xAxisLTVValues = data_set.trial_starts_all.map((trials, i) => {
+          return numberWithCommas(((trials * customLTV) - data_set.spend[i]).toFixed(2));
         });    
 
         // console.log("is movingaverage checked?", isChecked);
         break;
     // case "gm_vs_roi":
     //     // ${( tempData.ltv_subs_revenue / tempData.spend * 100 ).toFixed(2)}%
-    //     xAxisValues = comparison_data.ltv_subs_revenue.map((revenue, i) => {
-    //       return ( ( (revenue / comparison_data.spend[i]) - 1 ) * 100 ).toFixed(2);
+    //     xAxisValues = data_set.ltv_subs_revenue.map((revenue, i) => {
+    //       return ( ( (revenue / data_set.spend[i]) - 1 ) * 100 ).toFixed(2);
     //     });
     //     // console.log("is movingaverage checked?", isChecked);
     //     break;
@@ -2000,51 +2054,51 @@ function getComparisonChartXValues(return_dataset){
   }
   
   // return xAxisValues;
-  return (return_dataset === "LTV") ? xAxisLTVValues : xAxisValues;
+  return (return_ltv_or_actual === "LTV") ? xAxisLTVValues : xAxisValues;
 }
 
 
 
-function getComparisonChartYValues(return_dataset){
+function getComparisonChartYValues(data_set, return_ltv_or_actual){
 
   let yAxisValues = [];
   let yAxisLTVValues = [];
 
   switch (comparisonChartType) {
-    case "spend_vs_revenue":
-      yAxisValues = comparison_data.ltv_subs_revenue;
+    case "spend_vs_revenue": // y values are revenue
+      yAxisValues = data_set.ltv_subs_revenue;
       
-      yAxisLTVValues = comparison_data.trial_starts_all.map((trials, i) => {
+      yAxisLTVValues = data_set.trial_starts_all.map((trials, i) => {
         return numberWithCommas( (trials * customLTV).toFixed(2) );
       });
       break;
-    case "spend_vs_gm":
-      yAxisValues = comparison_data.ltv_subs_revenue.map((revenue, i) => {
-        return numberWithCommas((revenue - comparison_data.spend[i]).toFixed(2));
+    case "spend_vs_gm": // y values are gross margi
+      yAxisValues = data_set.ltv_subs_revenue.map((revenue, i) => {
+        return numberWithCommas((revenue - data_set.spend[i]).toFixed(2));
       });
 
-      yAxisLTVValues = comparison_data.trial_starts_all.map((trials, i) => {
-        return numberWithCommas( ((trials * customLTV) - comparison_data.spend[i]).toFixed(2) );
+      yAxisLTVValues = data_set.trial_starts_all.map((trials, i) => {
+        return numberWithCommas( ((trials * customLTV) - data_set.spend[i]).toFixed(2) );
         // return numberWithCommas( (trials * customLTV).toFixed(2) );
       });      
       // console.log("is movingaverage checked?", isChecked);
       break;
     case "spend_vs_roi":
-    case "gm_vs_roi":
-        yAxisValues = comparison_data.ltv_subs_revenue.map((revenue, i) => {
-          return ( ( (revenue / comparison_data.spend[i]) - 1 ) * 100 ).toFixed(2);
+    case "gm_vs_roi": // y values are ROI
+        yAxisValues = data_set.ltv_subs_revenue.map((revenue, i) => {
+          return ( ( (revenue / data_set.spend[i]) - 1 ) * 100 ).toFixed(2);
         });
 
-        yAxisLTVValues = comparison_data.trial_starts_all.map((trials, i) => {
-          return ( ( ((trials * customLTV) / comparison_data.spend[i]) - 1 ) * 100 ).toFixed(2);
+        yAxisLTVValues = data_set.trial_starts_all.map((trials, i) => {
+          return ( ( ((trials * customLTV) / data_set.spend[i]) - 1 ) * 100 ).toFixed(2);
           // return numberWithCommas( (trials * customLTV).toFixed(2) );
         });           
         // console.log("is movingaverage checked?", isChecked);
         break;
     // case "gm_vs_roi":
     //     // ${( tempData.ltv_subs_revenue / tempData.spend * 100 ).toFixed(2)}%
-    //     yAxisValues = comparison_data.ltv_subs_revenue.map((revenue, i) => {
-    //       return ( ( (revenue / comparison_data.spend[i]) - 1 ) * 100 ).toFixed(2);
+    //     yAxisValues = data_set.ltv_subs_revenue.map((revenue, i) => {
+    //       return ( ( (revenue / data_set.spend[i]) - 1 ) * 100 ).toFixed(2);
     //     });
     //     // console.log("is movingaverage checked?", isChecked);
     //     break;
@@ -2052,7 +2106,7 @@ function getComparisonChartYValues(return_dataset){
       console.log("need to add '" + comparisonChartType + "' radio button to switch statement");
   }
   
-  return (return_dataset === "LTV") ? yAxisLTVValues : yAxisValues;
+  return (return_ltv_or_actual === "LTV") ? yAxisLTVValues : yAxisValues;
 }
 
 
