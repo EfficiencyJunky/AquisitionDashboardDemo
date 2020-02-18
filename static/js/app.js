@@ -951,6 +951,8 @@ function displayTableData(data){
     // console.log("attempting to display table data");
     // console.log("tabledata = ", data);
 
+    
+
     advertiser_data = data.filter((d) => {
       return d.advertiser !== "Organic";
     });
@@ -1061,13 +1063,11 @@ function updateAdvertiserSelection(){
 
   advertisers_chosen = get_checkbox_choices(".AdvertiserCheckbox");
 
-  // console.log(advertisers_chosen);
-
   if(advertisers_chosen.length === 0){
     advertisers_chosen = all_possible_advertisers;
   }
-  
-  if(advertisers_chosen.length === 1 && advertisers_chosen.includes("Organic")){
+
+  if( advertisers_chosen.length === 1 && advertisers_chosen.includes("Organic") ){
     highlight_text_with_class(".select_advertisers_header_text", true);
   }
   else{
@@ -1307,8 +1307,30 @@ function generateTableData(){
   // create a list to hold all potential advertiser's aggregate dictionaries
   let table_data = [];
 
+  
+  let advertisers_to_use = advertisers_chosen;
+
+  // if we are not usin the flask app, then we need to filter out the 
+  // Google and ASA advertisers if they are chosen
+  if(using_flask_app === false){
+    // in the case that Android is the only OS chosen, we want to only allow certain advertisers
+    if(os_chosen.length === 1 && os_chosen.includes("ANDROID")){
+
+      // this will filter out only the advertisers we are using for Android
+      advertisers_to_use = advertisers_chosen.filter(x => ["Facebook Ads", "pinterest_int", "snapchat_int"].includes(x));
+
+      // we also want to add Organic if that one is selected
+      if(advertisers_chosen.includes("Organic")){
+        advertisers_to_use.push("Organic");
+      }
+    }
+  }
+
+
+  // console.log(advertisers_to_use);
+
   // cycle through the list of chosen advertisers and create a proto dictionary for each
-  for(advertiser of advertisers_chosen){
+  for(advertiser of advertisers_to_use){
 
     let placeholder_dictionary = {
                                     "advertiser": advertiser
@@ -1365,7 +1387,7 @@ function generateComparisonChartData(){
         let unique_paid_advertisers = data_to_use.advertiser.filter( onlyUnique ).filter( x => x !== "Organic");
 
         // in the case that Android is the only OS chosen, we want to only allow certain advertisers
-        if(advertisers_chosen.length === 1 && advertisers_chosen.includes("ANDROID")){
+        if(os_chosen.length === 1 && os_chosen.includes("ANDROID")){
           unique_paid_advertisers = unique_paid_advertisers.filter(x => ["Facebook Ads", "pinterest_int", "snapchat_int"].includes(x));
         }
 
