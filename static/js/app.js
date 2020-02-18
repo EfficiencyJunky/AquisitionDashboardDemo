@@ -584,13 +584,18 @@ const getRowHTML = function(tempData){
     ${numberWithCommas(tempData.impressions)}<!-- Impressions -->
   </td>
   <td>
-    ${numberWithCommas(tempData.clicks)}<!-- Clicks -->
-  </td>
-  <td>
     ${( (tempData.clicks / tempData.impressions) * 100 ).toFixed(2)}% <!-- CTR -->
   </td>
   <td>
-    ${numberWithCommas(tempData.views)}<!-- Views -->
+    ${numberWithCommas(tempData.clicks)}<!-- Clicks -->
+  </td>
+<!-- 
+  <td>
+    ${numberWithCommas(tempData.views)}<- Views ->
+  </td>
+-->
+  <td>
+  ${( (tempData.installs / tempData.clicks) * 100 ).toFixed(2)}% <!-- Installs per click -->
   </td>
   <td>
     ${numberWithCommas(tempData.installs)}<!-- Installs -->
@@ -601,14 +606,16 @@ const getRowHTML = function(tempData){
   <td>
     $${(tempData.ltv_subs_revenue / tempData.installs).toFixed(2)}<!-- ARPU -->
   </td>
+<!-- 
   <td>
-    ${( (tempData.installs / tempData.clicks) * 100 ).toFixed(2)}% <!-- CRI -->
+    ${numberWithCommas(tempData.sessions)}<- Sessions ->
+  </td>
+-->
+  <td>
+    ${numberWithCommas(tempData.new_workout_saved_unique)}<!-- Core Actions -->
   </td>
   <td>
-    ${numberWithCommas(tempData.sessions)}<!-- Sessions -->
-  </td>
-  <td>
-    ${numberWithCommas(tempData.new_workout_saved_unique)}<!-- Unique Workouts -->
+    ${( (tempData.trial_starts_all / tempData.installs) * 100 ).toFixed(2)}% <!-- Trials / Install -->
   </td>
   <td>
     ${numberWithCommas(tempData.trial_starts_all)}<!-- Trial Starts -->
@@ -620,13 +627,16 @@ const getRowHTML = function(tempData){
     $${(tempData.ltv_subs_revenue / tempData.trial_starts_all).toFixed(2)}<!-- ARP Trial -->
   </td>
   <td>
-    ${( (tempData.trial_starts_all / tempData.installs) * 100 ).toFixed(2)}% <!-- Trials / User -->
+    ${( (tempData.ltv_subs_all / tempData.trial_starts_all) * 100 ).toFixed(2)}% <!-- Subs / Trial -->
   </td>
   <td>
     ${numberWithCommas(tempData.ltv_subs_all)}<!-- Subscribers -->
   </td>
   <td>
-    ${( (tempData.ltv_subs_all / tempData.trial_starts_all) * 100 ).toFixed(2)}% <!-- Subs / Trial -->
+    $${(tempData.spend / tempData.ltv_subs_all).toFixed(2)}<!-- CPSub -->
+  </td>
+  <td>
+    $${(tempData.ltv_subs_revenue / tempData.ltv_subs_all).toFixed(2)}<!-- ARP Sub -->
   </td>
   <td>
     $${numberWithCommas(tempData.ltv_subs_revenue.toFixed(2))}<!-- Revenue -->
@@ -662,19 +672,24 @@ const getOrganicPlusPaidSummaryRowHTML = function(tempData){
     ${tempData.advertiser}<!-- Advertiser Name -->
   </td>
   <td>
-    $${numberWithCommas(tempData.spend.toFixed(2))}<!-- --><!-- Spend -->
+    $${numberWithCommas(tempData.spend.toFixed(2))}<!-- Spend -->
   </td>
   <td>
     <!-- ${numberWithCommas(tempData.impressions)}--><!-- Impressions -->
   </td>
   <td>
-    <!-- ${numberWithCommas(tempData.clicks)}--><!-- Clicks -->
-  </td>
-  <td>
     <!-- ${( (tempData.clicks / tempData.impressions) * 100 ).toFixed(2)}% --><!-- CTR -->
   </td>
   <td>
-    <!-- ${numberWithCommas(tempData.views)}--><!-- Views -->
+    <!-- ${numberWithCommas(tempData.clicks)}--><!-- Clicks -->
+  </td>
+<!-- 
+  <td>
+  <- ${numberWithCommas(tempData.views)}-><- Views ->
+  </td>
+-->
+  <td>
+  <!-- Installs / Click -->
   </td>
   <td>
     ${numberWithCommas(tempData.installs)}<!-- Installs -->
@@ -685,14 +700,16 @@ const getOrganicPlusPaidSummaryRowHTML = function(tempData){
   <td>
     <!-- ARPU -->
   </td>
+<!-- 
   <td>
-    <!-- Installs / Click -->
+    <-${numberWithCommas(tempData.sessions)}-><- Sessions ->
+  </td>
+-->
+  <td>
+    ${numberWithCommas(tempData.new_workout_saved_unique)}<!-- Core Actions -->
   </td>
   <td>
-    <!-- ${numberWithCommas(tempData.sessions)}--><!-- Sessions -->
-  </td>
-  <td>
-    ${numberWithCommas(tempData.new_workout_saved_unique)}<!-- Unique Workouts -->
+    ${( (tempData.trial_starts_all / tempData.installs) * 100 ).toFixed(2)}% <!-- Trials / Install -->
   </td>
   <td>
     ${numberWithCommas(tempData.trial_starts_all)}<!-- Trial Starts -->
@@ -704,17 +721,21 @@ const getOrganicPlusPaidSummaryRowHTML = function(tempData){
     <!-- ARP Trial -->
   </td>
   <td>
-    ${( (tempData.trial_starts_all / tempData.installs) * 100 ).toFixed(2)}% <!-- Trials / User -->
+    <!-- Subs / Trial -->
   </td>
   <td>
     <!-- Subscribers -->
   </td>
   <td>
-    <!-- Subs / Trial -->
+    <!-- CPSub -->
+  </td>
+  <td>
+    <!-- ARP Sub -->
     GROSS<br>MARGIN<br>
     $${numberWithCommas((tempData.ltv_subs_revenue - tempData.spend).toFixed(2))}
   </td>
   <td>
+  <!-- Revenue -->
   <!-- Subs/Org<br>GM<br>ARPU
     $${( (tempData.ltv_subs_revenue / tempData.installs) - (tempData.spend / tempData.installs) ).toFixed(2)}  GM ARPU 
   -->
@@ -766,32 +787,35 @@ const getOrganicRowHTML = function(tempData){
   </td>
   <td>--</td><!-- Spend -->
   <td>--</td><!-- Impressions -->
-  <td>--</td><!-- Clicks -->
   <td>--</td><!-- CTR -->
-  <td>--</td><!-- Views -->
+  <td>--</td><!-- Clicks -->
+  <!--<td>--</td>--> <!-- Views -->
+  <td>--</td><!-- Inst/Click -->
   <td>
     ${numberWithCommas(tempData.installs)}<!-- Installs -->
   </td>
   <td>--</td><!-- CPI -->
   <td>--</td><!-- ARPU -->
-  <td>--</td><!-- Inst/Click -->
-  <td>--</td><!-- Sessions -->
+  <!--<td>--</td>--><!-- Sessions -->
   <td>
-    ${numberWithCommas(tempData.new_workout_saved_unique)}<!-- Unique Workouts -->
+    ${numberWithCommas(tempData.new_workout_saved_unique)}<!-- Core Actions -->
+  </td>
+  <td>
+  ${( (tempData.trial_starts_all / tempData.installs) * 100 ).toFixed(2)}% <!-- Trials / Install -->
   </td>
   <td>
     ${numberWithCommas(tempData.trial_starts_all)}<!-- Trial Starts -->
   </td>
   <td>--</td><!-- CPT -->
   <td>--</td><!-- ARP Trial -->
-  <td>
-    ${( (tempData.trial_starts_all / tempData.installs) * 100 ).toFixed(2)}% <!-- Trials/User -->
-  </td>
-  <td>--</td><!-- Subs -->
   <td>--</td><!-- Subs/Trial-->
+  <td>--</td><!-- Subs -->
+  <td>--</td><!-- CPSub -->
+  <td>--</td><!-- ARP Sub -->
   <td>
+  <!-- Revenue -->
   Revenue Misattributed as Organic<br>
-    $${numberWithCommas((tempData.ltv_subs_revenue).toFixed(2))}<!-- Revenue -->
+    $${numberWithCommas((tempData.ltv_subs_revenue).toFixed(2))}
   </td>
   <td>--</td><!-- ROAS -->`;
   // <td>--</td><!-- SUBS: Prem Mems -->
@@ -818,28 +842,30 @@ const getBlankRowHTML = function(){
   <td>--</td><!-- Advertiser Name -->
   <td>--</td><!-- Spend -->
   <td>--</td><!-- Impressions -->
-  <td>--</td><!-- Clicks -->
   <td>--</td><!-- CTR -->
-  <td>--</td><!-- Views -->
+  <td>--</td><!-- Clicks -->
+  <!--<td>--</td>--> <!-- Views -->
+  <td>--</td><!-- Inst/Click -->
   <td>--</td><!-- Installs -->
   <td>--</td><!-- CPI -->
   <td>--</td><!-- ARPU -->
-  <td>--</td><!-- Inst/Click -->
-  <td>--</td><!-- Sessions -->
-  <td>--</td><!-- Unique Workouts -->
+  <!-- <td>--</td>--> <!-- Sessions -->
+  <td>--</td><!-- Core Actions -->
+  <td>--</td><!-- Trials/User-->
   <td>--</td><!-- Trial Starts -->
   <td>--</td><!-- CPT -->
   <td>--</td><!-- ARP Trial -->
-  <td>--</td><!-- Trials/User -->
-  <td>--</td><!-- Subs -->
   <td>--</td><!-- Subs/Trial-->
+  <td>--</td><!-- Subs -->
+  <td>--</td><!-- CPSub -->
+  <td>--</td><!-- ARP Sub -->
   <td>--</td><!-- Revenue -->
-  <td>--</td><!-- ROAS -->
-  <td>--</td><!-- SUBS: Prem Mems -->
-  <td>--</td><!-- REV: Prem Mems-->
-  <td>--</td><!-- SUBS: Text Chat  -->
-  <td>--</td><!-- REV: Text Chat -->
-  <td>--</td><!-- TOTAL ROAS -->`;
+  <td>--</td><!-- ROAS -->`;
+  // <td>--</td><!-- SUBS: Prem Mems -->
+  // <td>--</td><!-- REV: Prem Mems-->
+  // <td>--</td><!-- SUBS: Text Chat  -->
+  // <td>--</td><!-- REV: Text Chat -->
+  // <td>--</td><!-- TOTAL ROAS -->
 
   return paidTableHtml;
 }
@@ -2129,7 +2155,7 @@ function init(){
 function init_with_static_data() {
   console.log("init with static data");
 
-  os_chosen = ["IOS"];
+  os_chosen = ["IOS", "ANDROID"];
   advertisers_chosen = ["Facebook Ads"];
   metrics_chosen = ["spend"];
 
@@ -2227,9 +2253,6 @@ function init_with_static_data() {
     }
   }
 
-
-
-
   // console.log(os_chosen);
   // console.log(advertisers_chosen);
   // console.log(metrics_chosen);
@@ -2267,21 +2290,27 @@ function init_with_flask_app() {
 
     // index 0 returns a list of value names for the OS Checkboxes that are 'checked'
     // index 1 returns a list of value names for the Advertiser Checkboxes that are 'checked'
-    let osCheckboxes = chosenCheckboxes[0];
-    let advertiserCheckboxes = chosenCheckboxes[1];
+    let os_chosen = chosenCheckboxes[0];
+    
+    let checkbox = "";
 
-    osCheckboxes.map( (checkbox) => {
+    if(os_chosen.length === 1 && os_chosen.includes("IOS")){
+      checkbox = "IOS";
+    }
+    else if(os_chosen.length === 1 && os_chosen.includes("ANDROID")){
+      checkbox = "ANDROID";
+    }
+    else{
+      checkbox = "BOTH";
+    }
 
-      selectStatement = ".OSCheckbox[value='" + checkbox + "']";
+    let selectStatement = ".OSCheckbox[value='" + checkbox + "']";
+    d3.selectAll(selectStatement).property("checked", true);
 
-      // console.log(selectStatement);
-
-      d3.selectAll(selectStatement).property("checked", true);
-
-    });
-
-    os_chosen = osCheckboxes;
     // console.log("os_chosen ============= ", os_chosen); 
+
+
+    let advertiserCheckboxes = chosenCheckboxes[1];
 
     advertiserCheckboxes.map( (checkbox) => {
 
