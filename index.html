@@ -93,10 +93,11 @@
           <input type="checkbox" class="AdvertiserCheckbox" value="liftoff_int"> Liftoff</br>-->
           <input type="checkbox" class="AdvertiserCheckbox" value="googleadwords_int"> <span class="ios_only_text">Google (ios only)</span></br>
           <input type="checkbox" class="AdvertiserCheckbox" value="Apple Search Ads"> <span class="ios_only_text">Apple Search (ios only)</span></br>
-          <input type="checkbox" class="AdvertiserCheckbox" value="Organic"> Organic
+
           <!-- <select id="selDataset" onchange="optionChanged(this.value)"></select> -->
-          <br><b>_______________</b><br>
+          <b>_______________</b><br>
           <input type="checkbox" class="GraphModifierCheckBox" value="aggregate_advertisers"> Aggregate Advertiser Data</br>
+          <input type="checkbox" class="AdvertiserCheckbox" value="Organic"> Organic (Installs/Trials only)
         </div>
       </div>
 
@@ -224,6 +225,20 @@
 
       <div class="col-sm-3">
 
+        <div class="row"><div class="col-xs-12">
+          <div class="panel panel-primary">
+            <div class="panel-heading">
+              <h3 class="panel-title">Date Picker</h3>
+            </div>
+            <!-- <input type="text" name="daterange" value="01/01/2018 - 01/15/2018" /> -->
+            <div id="reportrange" class="panel-body" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+                <i class="fa fa-calendar"></i>&nbsp;
+                <span></span> <i class="fa fa-caret-down"></i>
+            </div>
+            <!-- <div id="date-picker" class="panel-body" onchange="dateChanged(this.value)"></div> -->
+          </div>
+        </div></div>  
+
         <div class="row visible-for-line-graph"><div class="col-xs-12">
           <div class="well">
             <h5>Set Y-Axis Max Values:</h5>
@@ -241,22 +256,6 @@
             </div>
           </div> 
         </div></div>
-
-
-        <div class="row"><div class="col-xs-12">
-          <div class="panel panel-primary">
-            <div class="panel-heading">
-              <h3 class="panel-title">Date Picker</h3>
-            </div>
-            <!-- <input type="text" name="daterange" value="01/01/2018 - 01/15/2018" /> -->
-            <div id="reportrange" class="panel-body" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
-                <i class="fa fa-calendar"></i>&nbsp;
-                <span></span> <i class="fa fa-caret-down"></i>
-            </div>
-            <!-- <div id="date-picker" class="panel-body" onchange="dateChanged(this.value)"></div> -->
-          </div>
-        </div></div>  
-
 
 
 
