@@ -11,14 +11,14 @@ let scale_down_last_8_days_revenue = true;
 
 // console.log("this is the beginning " );
 let advertiser_info = {
-  "Facebook Ads":       {"name": "FB",      "color": "blue",          "ltv_color": "blue",                  "ltv_opacity": 0.35},
-  "pinterest_int":      {"name": "PINT",    "color": "red",           "ltv_color": "red",                   "ltv_opacity": 0.35},
-  "snapchat_int":       {"name": "SNAP",    "color": "darkorange",    "ltv_color": "darkorange",            "ltv_opacity": 0.35},
-  // "liftoff_int":        {"name": "LIFT",    "color": "cyan",       "ltv_color": "cyan",                  "ltv_opacity": 0.35},
-  "googleadwords_int":  {"name": "GOOG",    "color": "saddlebrown",   "ltv_color": "saddlebrown",           "ltv_opacity": 0.35},  
-  "Apple Search Ads":   {"name": "ASA",     "color": "grey",          "ltv_color": "grey",                  "ltv_opacity": 0.35},
-  "Aggregate Paid":     {"name": "AGG",     "color": "black",         "ltv_color": "rgba(255, 0, 0, 0.6)",  "ltv_opacity": 1.0},
-  "Organic":            {"name": "Organic", "color": "green",         "ltv_color": "rgba(255, 0, 0, 0.6)",  "ltv_opacity": 1.0}
+  "Facebook Ads":       {"name": "FB",      "long_name": "Facebook/IG",       "color": "blue",          "ltv_color": "blue",                  "ltv_opacity": 0.35},
+  "pinterest_int":      {"name": "PINT",    "long_name": "Pinterest",         "color": "red",           "ltv_color": "red",                   "ltv_opacity": 0.35},
+  "snapchat_int":       {"name": "SNAP",    "long_name": "Snapchat",          "color": "darkorange",    "ltv_color": "darkorange",            "ltv_opacity": 0.35},
+  // "liftoff_int":        {"name": "LIFT",    "long_name": "Liftoff",        "color": "cyan",       "ltv_color": "cyan",                  "ltv_opacity": 0.35},
+  "googleadwords_int":  {"name": "GOOG",    "long_name": "Google UAC",        "color": "saddlebrown",   "ltv_color": "saddlebrown",           "ltv_opacity": 0.35},  
+  "Apple Search Ads":   {"name": "ASA",     "long_name": "Apple Search Ads",  "color": "grey",          "ltv_color": "grey",                  "ltv_opacity": 0.35},
+  "Aggregate Paid":     {"name": "AGG",     "long_name": "PAID AGGREGATE",    "color": "black",         "ltv_color": "rgba(255, 0, 0, 0.6)",  "ltv_opacity": 1.0},
+  "Organic":            {"name": "Organic", "long_name": "Organic",           "color": "green",         "ltv_color": "rgba(255, 0, 0, 0.6)",  "ltv_opacity": 1.0}
 };
 
 let all_possible_advertisers = Object.keys(advertiser_info).filter(d => d != "Aggregate Paid");
@@ -575,7 +575,7 @@ const getRowHTML = function(tempData){
   
   paidTableHtml = `<!-- <td>${tempData.date}</td> --><!-- Date -->
   <td>
-    ${tempData.advertiser}<!-- Advertiser Name -->
+    ${advertiser_info[tempData.advertiser].long_name}<!-- Advertiser Name -->
   </td>
   <td>
     $${numberWithCommas(tempData.spend.toFixed(2))}<!-- Spend -->
@@ -971,7 +971,7 @@ function displayTableData(data){
 
     // if there's more than one advertiser add the paid summary row
     if( advertiser_data.length > 1) {
-      createSummaryRow(advertiser_data, "PAID SUMMARY", "tr.summary", getRowHTML);
+      createSummaryRow(advertiser_data, "Aggregate Paid", "tr.summary", getRowHTML);
     }
 
     // add organics row
