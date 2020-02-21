@@ -1067,11 +1067,26 @@ function updateAdvertiserSelection(){
     advertisers_chosen = all_possible_advertisers;
   }
 
+  let text_highlight_styles = {
+    "style1": 
+      {
+        "style":'font-style',
+        "param_true":'italic',
+        "param_false":'initial'
+      },
+    "style2": 
+      {
+        "style":'color',
+        "param_true":'red',
+        "param_false":'initial'
+      }
+  }
+
   if( advertisers_chosen.length === 1 && advertisers_chosen.includes("Organic") ){
-    highlight_text_with_class(".select_advertisers_header_text", true);
+    highlight_text_with_class(".select_advertisers_header_text", true, text_highlight_styles);
   }
   else{
-    highlight_text_with_class(".select_advertisers_header_text", false);
+    highlight_text_with_class(".select_advertisers_header_text", false, text_highlight_styles);
   }
 
 
@@ -1456,6 +1471,21 @@ function updateMetricsSelection(callBuildCharts){
 
   metrics_chosen = get_checkbox_choices(".MetricsCheckbox");
 
+  let text_highlight_styles = {
+    "style1": 
+      {
+        "style":'font-style',
+        "param_true":'italic',
+        "param_false":'initial'
+      },
+    "style2": 
+      {
+        "style":'color',
+        "param_true":'red',
+        "param_false":'initial'
+      }
+  }
+
   // console.log(metrics_chosen);
 
   // if all the metrics boxes are unchecked, we want to warn the user
@@ -1464,10 +1494,10 @@ function updateMetricsSelection(callBuildCharts){
   // that is always checked in order to make the y-axis show up when no metrics
   // are showing in the plot area. it's a hack but it works
   if(metrics_chosen.length <= 1){
-    highlight_text_with_class(".select_metrics_header_text", true);
+    highlight_text_with_class(".select_metrics_header_text", true, text_highlight_styles);
   }
   else{
-    highlight_text_with_class(".select_metrics_header_text", false);
+    highlight_text_with_class(".select_metrics_header_text", false, text_highlight_styles);
   }
 
   // callBuildCharts is only sent in when called by the init function
@@ -1493,57 +1523,31 @@ function updateAdditionalControls(){
   switch (chosenCheckBox) {
     case "stacked":
       displayStackedGraph = isChecked;
-      
-      d3.selectAll(".highlightable_metric").each( function(d) {
-        let element = d3.select(this); // gets a reference to the element
 
-        if(displayStackedGraph) {
-          // element.style({"color":"green"});
-          // element.style('border', '5px black solid');
-          // element.style('background', '#ff0000');
-          // element.style('text-shadow', '1px 1px #000000');
-          
-          element.style('font-weight', 'bold');
-          element.style('font-style', 'italic');
-        }
-        else{
-          element.style('font-weight', 'initial');
-          element.style('font-style', 'initial');
-        }
+      let text_highlight_styles = {
+        "style1": 
+          {
+            "style":'font-weight',
+            "param_true":'bold',
+            "param_false":'initial'
+          },
+        "style2": 
+          {
+            "style":'font-style',
+            "param_true":'italic',
+            "param_false":'initial'
+          }
+      }
 
-      });
-      
-      // ORIGINAL ATTEMPT AT DOING SOMETHING WITH THE CHECKBOXES THEMSELVES
-      // // loop through and highlight or clear highlighting
-      // // for each checkbox associated with a metric that is stackable
-      // d3.selectAll(".MetricsCheckbox").each( function(d) {
-    
-      //   let cb = d3.select(this); // gets a reference to the checkbox
-      //   let cb_metric = cb.property("value"); // gets the name of the metric
+      if(displayStackedGraph) {
+        highlight_text_with_class(".highlightable_metric", true, text_highlight_styles);
+      }
+      else{
+        highlight_text_with_class(".highlightable_metric", false, text_highlight_styles);
+      }
 
-      //   let metric_is_stackable = ( metrics_info[cb_metric].stack_group != "none" ); // metric is stackable
-      //   let metric_visible = ( !cb.property("disabled") ); // metric is enabled and visible in the app (not disabled)
-        
-        
-      //   // if the metric is stackable and visible to the user
-      //   // then we can apply highlighting or remove highlighting
-      //   if( metric_is_stackable && metric_visible){
-          
-      //     // if the "stacked" checkbox has been checked
-      //     // then we want to highlight the metric
-      //     if(displayStackedGraph) {
-      //       console.log("apply metrics highlight");
-      //       // cb.style({'stroke': 'black', 'stroke-width': 2})
-      //       // cb.style({"color":"green"});
-      //       cb.style('border', '5px black solid');
-      //     }
-      //     // otherwise, remove highlighting
-      //     else{
-      //       console.log("remove metrics highlight");
-      //       // cb.style({'stroke': 'none', 'stroke-width': 0})
-      //     }
-      //   }
-      // });
+      // One line way to do this
+      // highlight_text_with_class(".highlightable_metric", displayStackedGraph, text_highlight_styles);
       
       break;
     case "aggregate_advertisers":
@@ -1701,7 +1705,7 @@ function get_checkbox_choices(checkbox_type){
 
 }
 
-function highlight_text_with_class(class_to_highlight, highlight){
+function highlight_text_with_class(class_to_highlight, highlight, styles){
   
   d3.selectAll(class_to_highlight).each( function(d) {
     let element = d3.select(this); // gets a reference to the element
@@ -1715,13 +1719,18 @@ function highlight_text_with_class(class_to_highlight, highlight){
       // element.style('text-shadow', '1px 1px #000000');
       
       // element.style('font-weight', 'bold');
-      element.style('font-style', 'italic');
-      element.style('color', 'red');
+      element.style(styles["style1"].style, styles["style1"].param_true);
+      element.style(styles["style2"].style, styles["style2"].param_true);
+
+      // element.style('font-style', 'italic');
+      // element.style('color', 'red');
     }
     else{
+      element.style(styles["style1"].style, styles["style1"].param_false);
+      element.style(styles["style2"].style, styles["style2"].param_false);
       // element.style('font-weight', 'initial');
-      element.style('font-style', 'initial');
-      element.style('color', 'initial');
+      // element.style('font-style', 'initial');
+      // element.style('color', 'initial');
     }
 
   });
@@ -2179,7 +2188,25 @@ function init_with_static_data() {
 
   os_chosen = ["IOS", "ANDROID"];
   advertisers_chosen = ["Facebook Ads"];
-  metrics_chosen = ["spend"];
+  metrics_chosen = ["spend", "cpt", "roas"];
+  displayStackedGraph = true;
+
+  let text_highlight_styles = {
+    "style1": 
+      {
+        "style":'font-weight',
+        "param_true":'bold',
+        "param_false":'initial'
+      },
+    "style2": 
+      {
+        "style":'font-style',
+        "param_true":'italic',
+        "param_false":'initial'
+      }
+  }
+
+  highlight_text_with_class(".highlightable_metric", true, text_highlight_styles);
 
   //abracadabra
   // if the global variable that says we should scale the last 8 days is set to true
