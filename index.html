@@ -129,7 +129,7 @@
                 <div class="col-md-6 col-xs-6">
                   <input type="checkbox" class="MetricsCheckbox" value="spend" checked> <span class="highlightable_metric">Spend</span></br>
                   <input type="checkbox" class="MetricsCheckbox" value="cpi"> CPI</br>
-                  <input type="checkbox" class="MetricsCheckbox" value="cpt"> CPT</br>
+                  <input type="checkbox" class="MetricsCheckbox" value="cpt" checked> CPT</br>
                   <input type="checkbox" class="MetricsCheckbox" value="installs"> <span class="highlightable_metric">Installs</span></br>
                   <input type="checkbox" class="MetricsCheckbox" value="trial_starts_all"> <span class="highlightable_metric">Trial Starts</span></br>
                   <input type="checkbox" class="MetricsCheckbox" value="ltv_subs_all"> <span class="highlightable_metric">Subscribers</span></br>
@@ -138,13 +138,13 @@
                   <input type="checkbox" class="MetricsCheckbox" value="ltv_subs_revenue"> <span class="highlightable_metric">Revenue</span></br>
                   <input type="checkbox" class="MetricsCheckbox" value="arpu"> ARPU</br>
                   <input type="checkbox" class="MetricsCheckbox" value="arp_trial"> ARP/Trial</br>
-                  <input type="checkbox" class="MetricsCheckbox" value="roas"> ROAS</br>
+                  <input type="checkbox" class="MetricsCheckbox" value="roas" checked> ROAS</br>
                   <input type="checkbox" class="MetricsCheckbox" value="trials_per_user"> Trials/Inst</br>
                   <input type="checkbox" class="MetricsCheckbox" value="subs_per_trial"> Subs/Trial</br>
                 </div>
               </div>
               <b>_______________</b><br>
-              <input type="checkbox" class="GraphModifierCheckBox" value="stacked"> <span class="highlightable_metric">Stacked Graph</span></br>
+              <input type="checkbox" class="GraphModifierCheckBox" value="stacked" checked> <span class="highlightable_metric">Stacked Graph</span></br>
               <!--<br>
               <div class="row">-->
               <div class="row HiddenCheckbox">
@@ -375,7 +375,7 @@
   <script type="text/javascript">
     $(function() {
     
-        var start = moment().subtract(7, 'days');
+        var start = moment().subtract(30, 'days');
         var end = moment().subtract(1, 'days');
         var first_selectable_date = moment("2019-06-05");
         var last_selectable_date = moment();
