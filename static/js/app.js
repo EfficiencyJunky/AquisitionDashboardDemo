@@ -177,6 +177,7 @@ function comparisonChart() {
       y: getComparisonChartYValues(comparison_data[paid_advertiser], "actual"), 
       // name: paid_advertiser,
       name: advertiser_info[paid_advertiser].name,
+      text: comparison_data[paid_advertiser].date,
       mode: 'markers',
       marker: {
         // color: 'rgba(0, 0, 255, 0.6)',
