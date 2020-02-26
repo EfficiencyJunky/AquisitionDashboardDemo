@@ -11,19 +11,21 @@ let scale_down_last_8_days_revenue = true;
 
 // console.log("this is the beginning " );
 let advertiser_info = {
-  "Facebook Ads":       {"name": "FB",      "long_name": "Facebook/IG",       "color": "blue",          "ltv_color": "blue",                  "ltv_opacity": 0.35},
-  "pinterest_int":      {"name": "PINT",    "long_name": "Pinterest",         "color": "red",           "ltv_color": "red",                   "ltv_opacity": 0.35},
-  "snapchat_int":       {"name": "SNAP",    "long_name": "Snapchat",          "color": "darkorange",    "ltv_color": "darkorange",            "ltv_opacity": 0.35},
-  // "liftoff_int":        {"name": "LIFT",    "long_name": "Liftoff",        "color": "cyan",       "ltv_color": "cyan",                  "ltv_opacity": 0.35},
-  "googleadwords_int":  {"name": "GOOG",    "long_name": "Google UAC",        "color": "saddlebrown",   "ltv_color": "saddlebrown",           "ltv_opacity": 0.35},  
-  "Apple Search Ads":   {"name": "ASA",     "long_name": "Apple Search Ads",  "color": "grey",          "ltv_color": "grey",                  "ltv_opacity": 0.35},
-  "Aggregate Paid":     {"name": "AGG",     "long_name": "PAID AGGREGATE",    "color": "black",         "ltv_color": "rgba(255, 0, 0, 0.6)",  "ltv_opacity": 1.0},
-  "Organic":            {"name": "Organic", "long_name": "Organic",           "color": "green",         "ltv_color": "rgba(255, 0, 0, 0.6)",  "ltv_opacity": 1.0}
+  "Facebook Ads":       {"name": "FB",      "long_name": "Facebook/IG",       "avail_on_android": true,   "color": "blue",          "ltv_color": "blue",                  "ltv_opacity": 0.35},
+  "pinterest_int":      {"name": "PINT",    "long_name": "Pinterest",         "avail_on_android": true,   "color": "red",           "ltv_color": "red",                   "ltv_opacity": 0.35},
+  "snapchat_int":       {"name": "SNAP",    "long_name": "Snapchat",          "avail_on_android": true,   "color": "darkorange",    "ltv_color": "darkorange",            "ltv_opacity": 0.35},
+  // "liftoff_int":        {"name": "LIFT",    "long_name": "Liftoff",        "avail_on_android": false,   "color": "cyan",       "ltv_color": "cyan",                  "ltv_opacity": 0.35},
+  "googleadwords_int":  {"name": "GOOG",    "long_name": "Google UAC",        "avail_on_android": false,   "color": "saddlebrown",   "ltv_color": "saddlebrown",           "ltv_opacity": 0.35},  
+  "Apple Search Ads":   {"name": "ASA",     "long_name": "Apple Search Ads",  "avail_on_android": false,   "color": "grey",          "ltv_color": "grey",                  "ltv_opacity": 0.35},
+  "Aggregate Paid":     {"name": "AGG",     "long_name": "PAID AGGREGATE",    "avail_on_android": true,   "color": "black",         "ltv_color": "rgba(255, 0, 0, 0.6)",  "ltv_opacity": 1.0},
+  "Organic":            {"name": "Organic", "long_name": "Organic",           "avail_on_android": true,   "color": "green",         "ltv_color": "rgba(255, 0, 0, 0.6)",  "ltv_opacity": 1.0}
 };
 
 let all_possible_advertisers = Object.keys(advertiser_info).filter(d => d != "Aggregate Paid");
+let all_possible_advertisers_android = all_possible_advertisers.filter(d => advertiser_info[d].avail_on_android);
 
-// console.log("all possible advertisers: ", all_possible_advertisers);
+
+// console.log("all possible advertisers android: ", all_possible_advertisers_android);
 
 // this is the total number of advertisers we have in the list above used to decide when we create the total summary row
 let num_paid_advertisers = Object.keys(advertiser_info).length - 2;
@@ -155,7 +157,6 @@ function buildCharts() {
 }
 
 // *********************************************************************
-// abracadabra comparison chart
 function comparisonChart() {
 
   let paid_advertisers_to_use = ["Aggregate Paid"];
@@ -1024,6 +1025,13 @@ function updateOSSelection(){
     os_chosen = ["IOS", "ANDROID"];
   }
 
+  // because of how choosing "Aggregate Advertiser Data" updates the list of
+  // selected advertisers to be a shortened list when Android is the chosen
+  // OS, we have to call this function to update the list of advertisers chosen
+  // in the case that Aggregate box is checked and we're switching between 
+  // IOS and ANDROID
+  updateAdvertisersChosen();
+
   // since Google and ASA only have metrics present for IOS, we want to do something
   // to highlight this when only the ANDROID radio button is checked
   // this code will set the text for those checkboxes to be italic and line through
@@ -1058,14 +1066,64 @@ function updateOSSelection(){
 
 }
 
-//abracadabra
-function updateAdvertiserSelection(){
 
+function updateAdvertisersChosen(){
   advertisers_chosen = get_checkbox_choices(".AdvertiserCheckbox");
 
   if(advertisers_chosen.length === 0){
-    advertisers_chosen = all_possible_advertisers;
+    if(os_chosen.length === 1 && os_chosen.includes("ANDROID")){
+      advertisers_chosen = all_possible_advertisers_android.filter(x => x != "Organic");
+    }
+    else{
+      advertisers_chosen = all_possible_advertisers.filter(x => x != "Organic");
+    }
+    
+    // console.log("alsjkdfads");
   }
+  else if(advertisers_chosen.length === 1 && advertisers_chosen.includes("Organic") && displayAggregateAdvertisers){
+    if(os_chosen.length === 1 && os_chosen.includes("ANDROID")){
+      advertisers_chosen = all_possible_advertisers_android;
+    }
+    else{
+      advertisers_chosen = all_possible_advertisers;
+    }
+
+    // console.log("this one");
+  }
+}
+
+
+
+//abracadabra
+function updateAdvertiserSelection(){
+
+  // advertisers_chosen = get_checkbox_choices(".AdvertiserCheckbox");
+
+  // if(advertisers_chosen.length === 0){
+  //   if(os_chosen.length === 1 && os_chosen.includes("ANDROID")){
+  //     advertisers_chosen = all_possible_advertisers_android.filter(x => x != "Organic");
+  //   }
+  //   else{
+  //     advertisers_chosen = all_possible_advertisers.filter(x => x != "Organic");
+  //   }
+    
+  //   // console.log("alsjkdfads");
+  // }
+  // else if(advertisers_chosen.length === 1 && advertisers_chosen.includes("Organic") && displayAggregateAdvertisers){
+  //   if(os_chosen.length === 1 && os_chosen.includes("ANDROID")){
+  //     advertisers_chosen = all_possible_advertisers_android;
+  //   }
+  //   else{
+  //     advertisers_chosen = all_possible_advertisers;
+  //   }
+
+  //   // console.log("this one");
+  // }
+  updateAdvertisersChosen();
+  // else if(advertisers_chosen.length === 1 && advertisers_chosen.includes("Organic") && !displayAggregateAdvertisers){
+  //   advertisers_chosen = ["Organic"];
+  // }
+
 
   let text_highlight_styles = {
     "style1": 
@@ -1088,7 +1146,6 @@ function updateAdvertiserSelection(){
   else{
     highlight_text_with_class(".select_advertisers_header_text", false, text_highlight_styles);
   }
-
 
   
   let api_call_base = "/api/v1.0/advertiser_type";
@@ -1325,20 +1382,21 @@ function generateTableData(){
   
   let advertisers_to_use = advertisers_chosen;
 
-  // if we are not usin the flask app, then we need to filter out the 
-  // Google and ASA advertisers if they are chosen
-  if(using_flask_app === false){
-    // in the case that Android is the only OS chosen, we want to only allow certain advertisers
-    if(os_chosen.length === 1 && os_chosen.includes("ANDROID")){
+  // if we are not usin the flask app, and in the case that Android is the only OS chosen, 
+  // we want to only allow the possible android advertisers that are chosen
+  if(using_flask_app === false && os_chosen.length === 1 && os_chosen.includes("ANDROID")){
+    
+    // if(){
 
       // this will filter out only the advertisers we are using for Android
-      advertisers_to_use = advertisers_chosen.filter(x => ["Facebook Ads", "pinterest_int", "snapchat_int"].includes(x));
+      // advertisers_to_use = advertisers_chosen.filter(x => ["Facebook Ads", "pinterest_int", "snapchat_int"].includes(x));
+      advertisers_to_use = advertisers_chosen.filter(x => all_possible_advertisers_android.includes(x));
 
-      // we also want to add Organic if that one is selected
-      if(advertisers_chosen.includes("Organic")){
-        advertisers_to_use.push("Organic");
-      }
-    }
+      // // we also want to add Organic if that one is selected
+      // if(advertisers_chosen.includes("Organic")){
+      //   advertisers_to_use.push("Organic");
+      // }
+    // }
   }
 
 
@@ -1403,7 +1461,7 @@ function generateComparisonChartData(){
 
         // in the case that Android is the only OS chosen, we want to only allow certain advertisers
         if(os_chosen.length === 1 && os_chosen.includes("ANDROID")){
-          unique_paid_advertisers = unique_paid_advertisers.filter(x => ["Facebook Ads", "pinterest_int", "snapchat_int"].includes(x));
+          unique_paid_advertisers = unique_paid_advertisers.filter(x => ["Facebook Ads", "pinterest_int", "snapchat_int", "Aggregate Paid"].includes(x));
         }
 
         // for all the advertisers selected, create a dictionary with each advertiser as a top level key
@@ -1587,8 +1645,20 @@ function updateAdditionalControls(){
         updateMetricsSelection(false);
       }
 
+      // if(!displayComparisonChart){
+      //   updateAdvertiserSelection();
+      //   return;
+      // }
+
+      // we need to update the advertiser selection because of the way that the Organics
+      // choise is separated from the other advertisers
+      // then we "return" instead of break because calling "updateAdvertiserSelection()"
+      // already calls "buildCharts()"
+      updateAdvertiserSelection();
+      return;
+      
       // console.log("stacked is", isChecked);
-      break;
+      // break;
     // case "giftcard_revenue":
     //   showGiftCard = isChecked;
     //   break;
@@ -1615,7 +1685,6 @@ function updateAdditionalControls(){
       console.log("need to add '" + chosenCheckBox + "' checkbox to switch statement");
   }
 
-  
   // buildCharts(chartdata, comparison_data);  
   buildCharts();  
 }
