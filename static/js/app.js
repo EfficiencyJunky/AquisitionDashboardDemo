@@ -13,7 +13,7 @@ let scale_down_last_8_days_revenue = true;
 let advertiser_info = {
   "Facebook Ads":       {"name": "FB",      "long_name": "Facebook/IG",       "avail_on_android": true,   "color": "blue",          "ltv_color": "blue",                  "ltv_opacity": 0.35},
   "pinterest_int":      {"name": "PINT",    "long_name": "Pinterest",         "avail_on_android": true,   "color": "red",           "ltv_color": "red",                   "ltv_opacity": 0.35},
-  "snapchat_int":       {"name": "SNAP",    "long_name": "Snapchat",          "avail_on_android": true,   "color": "darkorange",    "ltv_color": "darkorange",            "ltv_opacity": 0.35},
+  "snapchat_int":       {"name": "SNAP",    "long_name": "Snapchat",          "avail_on_android": true,   "color": "orange",        "ltv_color": "darkorange",            "ltv_opacity": 0.35},
   // "liftoff_int":        {"name": "LIFT",    "long_name": "Liftoff",        "avail_on_android": false,   "color": "cyan",       "ltv_color": "cyan",                  "ltv_opacity": 0.35},
   "googleadwords_int":  {"name": "GOOG",    "long_name": "Google UAC",        "avail_on_android": false,   "color": "saddlebrown",   "ltv_color": "saddlebrown",           "ltv_opacity": 0.35},  
   "Apple Search Ads":   {"name": "ASA",     "long_name": "Apple Search Ads",  "avail_on_android": false,   "color": "grey",          "ltv_color": "grey",                  "ltv_opacity": 0.35},
@@ -119,6 +119,7 @@ let organic_data_for_summary = [];
 let displayStackedGraph = false;
 let displayAggregateAdvertisers = false;
 let displayComparisonChart = false;
+// let displayComparisonChart = true;
 
 let comparisonChartType = "spend_vs_revenue";
 
@@ -164,6 +165,7 @@ function comparisonChart() {
   if(displayAggregateAdvertisers === false && using_flask_app === false){
     paid_advertisers_to_use = Object.keys(comparison_data).filter( x => x !== "Aggregate Paid");
   }
+
   // console.log(paid_advertisers_to_use);
   
   let traces = [];
@@ -229,7 +231,7 @@ function comparisonChart() {
       hoverinfo: 'name',
       mode: 'lines',
       line: {
-        color: "orange"
+        color: "mediumaquamarine"
       }
     };
     traces.push(trace2);
@@ -266,6 +268,9 @@ function comparisonChart() {
     width: 1200
   };  
   
+
+  traces.reverse();
+
   Plotly.react(myPlotDiv, traces, comparisonLayout);
   // Plotly.newPlot('linegraph', traces, comparisonLayout);
 
@@ -1011,12 +1016,15 @@ function dateChanged(start, end) {
   console.log("A new date selection was made: " + start_date + ' to ' + end_date );
   // Fetch new data each time a new sample is selected
 
+  if( displayComparisonChart){
+    setComparisonChartRevenueCutoffDateWarning();
+  }
+
   let api_call = "/api/v1.0/daterange_pandas/" + start_date + "/" + end_date; 
 
   makeAPICall(api_call);
 
 }
-
 
 function updateOSSelection(){
   
@@ -1840,9 +1848,17 @@ function set_metrics_visibility_state(){
 
   let line_graph_metrics = d3.selectAll(".visible-for-line-graph").classed("HiddenElement", displayComparisonChart);
   let comparison_chart_metrics = d3.selectAll(".visible-for-comparison-chart").classed("HiddenElement", !displayComparisonChart);
-
-
+  if(displayComparisonChart){
+    setComparisonChartRevenueCutoffDateWarning();
+  }
+  
 }
+
+function setComparisonChartRevenueCutoffDateWarning(){
+  let comparison_chart_cutoff_date_warning_element = d3.selectAll(".visible-for-revenue-cutoff-date").classed("HiddenElement", !(datepicker_end_date >= revenueCutoffDate ) );
+}
+
+
 
 function setTraceVisibility(metric){
 
@@ -2248,6 +2264,7 @@ function init(){
   // clear all HTML in the div with ID "linegraph" so that it's
   // clean and ready for the graph to be drawn
   d3.selectAll("#linegraph").html("");
+  d3.select("#revenueCutoffDate").html(moment(revenueCutoffDate).format('dddd, MM/DD'));
 
   (using_flask_app) ? init_with_flask_app() : init_with_static_data();
 
