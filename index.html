@@ -24,7 +24,18 @@
     .highlight, .table-striped > tbody > tr:nth-child(odd).highlight > td {
       background-color: rgb(92, 92, 92);
       color: white;
-    }    
+    } 
+    .comparisonBoxStyle {
+      background-color: rgb(190, 190, 190);
+      /* color: white; */
+      color: rgb(48, 48, 48);
+      /* font-weight: bold; */
+    } 
+    .chart_type_button_text{
+      /* color: rgb(48, 48, 48); */
+      font-weight: bold;
+      /* font-style: initial; */
+    }
     </style>
 </head>
 
@@ -42,8 +53,8 @@
 
       <div class="col-sm-3">
         <div class="row"><div class="col-xs-12">
-          <div class="well">
-            <h5>Chart Type:</h5>
+          <div class="well comparisonBoxStyle">
+            <h4>Chart Type:</h4>
             <!--<h5>Additional Controls:</h5> -->
             <!--<input type="checkbox" class="GraphModifierCheckBox" value="stacked"> Stacked Graph</br> -->
             <!-- <input type="checkbox" class="GraphModifierCheckBox" value="aggregate_advertisers"> Aggregate Advertiser Data</br> -->
@@ -51,8 +62,8 @@
             <!--<input type="checkbox" class="GraphModifierCheckBox" value="movingaverage"> Moving Average (unused)</br>-->
             <!--<input type="checkbox" class="GraphModifierCheckBox" value="comparison"> Comparison Chart</br>-->
             
-            <input type="radio" name="chart_type" class="GraphModifierCheckBox" value="overtime" checked> Over Time</br>
-            <input type="radio" name="chart_type" class="GraphModifierCheckBox" value="comparison"> Comparison</br>
+            <input type="radio" name="chart_type" class="GraphModifierCheckBox" value="overtime" checked> <span class="chart_type_button_text">Over Time</span> (discover)</br>
+            <input type="radio" name="chart_type" class="GraphModifierCheckBox" value="comparison"> <span class="chart_type_button_text">Comparison</span> (predict)</br>
 
             <!--<input type="checkbox" class="OSCheckbox" value="ANDROID"> ANDROID -->
             <!-- </br> -->
@@ -257,6 +268,19 @@
           </div> 
         </div></div>
 
+        
+        <div class="row HiddenElement visible-for-comparison-chart visible-for-revenue-cutoff-date"><div class="col-xs-12">
+          <div class="well">
+            <h5 style="text-align: center; color:red;">!!Date Range Includes Trial Conversion Window!!</h5>
+            <div class="row">
+              <div class="col-md-12 col-xs-12" style="text-align: center;">
+                Revenue may be low after<br>
+                <span id="revenueCutoffDate"></span><br>
+                Use LTV projection for revenue prediction.
+              </div>
+            </div>
+          </div> 
+        </div></div>
 
 
       </div>
