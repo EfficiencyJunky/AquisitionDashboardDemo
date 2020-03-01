@@ -285,7 +285,7 @@
             <div class="row">
               <div class="col-md-12 col-xs-12" style="text-align: center;">
                 Revenue may be low after<br>
-                <span id="revenueCutoffDate"></span><br>
+                <span id="revenueCutoffDate">date here</span><br>
                 Use LTV projection for revenue prediction.
               </div>
             </div>
@@ -310,6 +310,13 @@
     <div class="row">
       <div class="col-sm-12">
         <div id="linegraph"><br><br><h1 style="text-align:center"> LOADING DATA 1/3... </h1><br><br></div>
+      </div>
+    </div>
+
+    <!-- <div class="well"> -->
+    <div class="row">
+      <div class="col-sm-12">
+        <br><h2 style="text-align:center"> Full Funnel Analysis (<span id="numberOfDays"> ¯\_(ツ)_/¯ </span> day range) </h2><br>
       </div>
     </div>
 
@@ -361,7 +368,7 @@
         </table>
       </div>
     </div>
-
+  <!-- </div> -->
     <div class="row">
       <div class="col-sm-12">
         <div id="comparisongraph"></div>
@@ -413,11 +420,31 @@
         var end = moment().subtract(1, 'days');
         var first_selectable_date = moment("2019-06-05");
         var last_selectable_date = moment();
+        var all_time_date_range_int = last_selectable_date.diff(first_selectable_date, 'days');
     
         function cb(start, end) {
             $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
             dateChanged(start, end);
         }
+
+        // function feelingLucky() {
+
+        //   console.log("all time date range: " + all_time_date_range_int );
+        //   var rand_num = Math.random();
+
+        //   console.log("rand date range: " + rand_num );
+
+        //   var num_days_ago_start = Math.round(rand_num * all_time_date_range_int);
+
+        //   if(num_days_ago_start < 14){
+        //     num_days_ago_start = 14;
+        //   }
+
+        //   var first_day = moment().subtract(num_days_ago_start, 'days');
+        //   var last_day = moment().subtract(num_days_ago_start - 14, 'days');
+          
+        //   return [first_day, last_day];
+        // }
     
         $('#reportrange').daterangepicker({
             startDate: start,
@@ -425,23 +452,24 @@
             minDate: first_selectable_date,
             maxDate: last_selectable_date,
             ranges: {
-              'Today': [moment(), moment()],
-              'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
               'Last 7 Days': [moment().subtract(7, 'days'), moment().subtract(1, 'days')],
               'Last 14 Days': [moment().subtract(14, 'days'), moment().subtract(1, 'days')],
               'Last 30 Days': [moment().subtract(30, 'days'), moment().subtract(1, 'days')],
               'Last 90 Days': [moment().subtract(90, 'days'), moment().subtract(1, 'days')],
               '-10 to -24 Days': [moment().subtract(24, 'days'), moment().subtract(10, 'days')],
+              '1 week ago - 7 Day Period': [moment().subtract(14, 'days'), moment().subtract(8, 'days')],
+              '2 weeks ago - 7 Day Period': [moment().subtract(21, 'days'), moment().subtract(15, 'days')],
               // '-10 to April 6': [moment("2019-04-06"), moment().subtract(10, 'days')],
               // 'Q3 to -10 Days': [moment("2019-07-01"), moment().subtract(10, 'days')],
               // 'Holiday 2018': [moment("2018-10-01"), moment("2019-01-15")],
               // 'All Time': [moment("2018-06-28"), moment().subtract(1, 'days')],
               // 'All Time 2': [moment("2018-07-10"), moment().subtract(1, 'days')],
-              'All Time': [moment(first_selectable_date), moment().subtract(1, 'days')],
+              'Today': [moment(), moment()],
+              'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
               'This Month': [moment().startOf('month'), moment().endOf('month')],
               'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')],
-              '1 week ago - 7 Day Period': [moment().subtract(14, 'days'), moment().subtract(8, 'days')],
-              '2 weeks ago - 7 Day Period': [moment().subtract(21, 'days'), moment().subtract(15, 'days')]
+              // 'feeling lucky': feelingLucky(),
+              'All Time': [moment(first_selectable_date), moment().subtract(1, 'days')]
             }
         }, cb);
     

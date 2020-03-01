@@ -1016,9 +1016,17 @@ function dateChanged(start, end) {
   console.log("A new date selection was made: " + start_date + ' to ' + end_date );
   // Fetch new data each time a new sample is selected
 
-  if( displayComparisonChart){
+  if( displayComparisonChart ){
     setComparisonChartRevenueCutoffDateWarning();
   }
+
+  let numdays = end.diff(start, 'days') + 1;
+  
+  // let numdays_float = end.diff(start, 'days', true) + 1;
+  // console.log("diff integer: " + numdays);
+  // console.log("diff float: " + numdays_float);
+
+  d3.select("#numberOfDays").html(numdays);
 
   let api_call = "/api/v1.0/daterange_pandas/" + start_date + "/" + end_date; 
 
