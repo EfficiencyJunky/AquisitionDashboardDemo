@@ -126,7 +126,7 @@ let comparisonChartType = "spend_vs_revenue";
 let y1AxisMaxValue = 0;
 let y2AxisMaxValue = 0;
 
-let showLTVPerTrial = false;
+let showLTVPerTrial = true;
 let customLTV = 19;
 
 // console.log("revenue day:", revenueCutoffDate);
@@ -1746,6 +1746,11 @@ function showTheLTVPerTrial(){
   // showLTVPerTrial = this.value;
   showLTVPerTrial = this.checked; 
 
+  // either enable or disable the box where we input the LTV value and set color to "initial" or grey it out
+  let ltvPerTrialSetterBox = d3.select(".LTVPerTrialSetter");
+  ltvPerTrialSetterBox.property('disabled', !showLTVPerTrial);
+  ltvPerTrialSetterBox.style("color", (showLTVPerTrial) ? "initial" : "#ddd");
+  
   // console.log("showLTVPerTrial value", showLTVPerTrial)
 
   // buildCharts(chartdata, comparison_data);  
