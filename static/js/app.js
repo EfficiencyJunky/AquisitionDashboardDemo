@@ -1,3 +1,15 @@
+/* 
+TKs Acquisition Dashboard
+
+Copyright © 2019-2020 Turner Kirk
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. 
+*/
+
 /* ################################
   ****  GLOBAL VARIABLES
 ################################### */
@@ -14,7 +26,6 @@ let advertiser_info = {
   "Facebook Ads":       {"name": "FB",      "long_name": "Facebook/IG",       "avail_on_android": true,   "color": "blue",          "ltv_color": "blue",                  "ltv_opacity": 0.35},
   "pinterest_int":      {"name": "PINT",    "long_name": "Pinterest",         "avail_on_android": true,   "color": "red",           "ltv_color": "red",                   "ltv_opacity": 0.35},
   "snapchat_int":       {"name": "SNAP",    "long_name": "Snapchat",          "avail_on_android": true,   "color": "orange",        "ltv_color": "darkorange",            "ltv_opacity": 0.35},
-  // "liftoff_int":        {"name": "LIFT",    "long_name": "Liftoff",        "avail_on_android": false,   "color": "cyan",       "ltv_color": "cyan",                  "ltv_opacity": 0.35},
   "googleadwords_int":  {"name": "GOOG",    "long_name": "Google UAC",        "avail_on_android": false,   "color": "saddlebrown",   "ltv_color": "saddlebrown",           "ltv_opacity": 0.35},  
   "Apple Search Ads":   {"name": "ASA",     "long_name": "Apple Search Ads",  "avail_on_android": false,   "color": "grey",          "ltv_color": "grey",                  "ltv_opacity": 0.35},
   "Aggregate Paid":     {"name": "AGG",     "long_name": "PAID AGGREGATE",    "avail_on_android": true,   "color": "black",         "ltv_color": "rgba(255, 0, 0, 0.6)",  "ltv_opacity": 1.0},
@@ -40,30 +51,30 @@ let aggregate_advertiser_info = {
 //      type string ("solid", "dot", "dash", "longdash", "dashdot", or "longdashdot") 
 //      or a dash length list in px (eg "5px,10px,2px,2px").
 let metrics_info = {
-  "spend":                            {"name":"Spend",            "symbol": "$",   "highlight_revenue_cutoff_date": false,   "stack_group": "default",   "yaxis": "y1", "dash": "solid",       "numerator": "none",                             "divisor": "none"},
-  "installs":                         {"name":"Installs",         "symbol": "",    "highlight_revenue_cutoff_date": false,   "stack_group": "default",   "yaxis": "y1", "dash": "longdash",    "numerator": "none",                             "divisor": "none"},
-  "cpi":                              {"name":"CPI",              "symbol": "$",   "highlight_revenue_cutoff_date": false,   "stack_group": "none",      "yaxis": "y2", "dash": "dashdot",     "numerator": "spend",                            "divisor": "installs"},
-  "arpu":                             {"name":"ARPU",             "symbol": "$",   "highlight_revenue_cutoff_date": true,    "stack_group": "none",      "yaxis": "y2", "dash": "dot",         "numerator": "ltv_subs_revenue",                 "divisor": "installs"},
-  "trial_starts_all":                 {"name":"Trial Starts",     "symbol": "",    "highlight_revenue_cutoff_date": false,   "stack_group": "default",   "yaxis": "y1", "dash": "longdash",    "numerator": "none",                             "divisor": "none"},
-  "cpt":                              {"name":"CPT",              "symbol": "$",   "highlight_revenue_cutoff_date": false,   "stack_group": "none",      "yaxis": "y2", "dash": "dashdot",     "numerator": "spend",                            "divisor": "trial_starts_all"},
-  "arp_trial":                        {"name":"ARP Trial",        "symbol": "$",   "highlight_revenue_cutoff_date": true,    "stack_group": "none",      "yaxis": "y2", "dash": "dot",         "numerator": "ltv_subs_revenue",                 "divisor": "trial_starts_all"},
-  "trials_per_user":                  {"name":"Trials/Inst",      "symbol": "%",   "highlight_revenue_cutoff_date": false,   "stack_group": "none",      "yaxis": "y2", "dash": "dot",         "numerator": "trial_starts_all",                 "divisor": "installs"},
-  "ltv_subs_all":                     {"name":"App Subs",         "symbol": "",    "highlight_revenue_cutoff_date": true,    "stack_group": "PAYERS",    "yaxis": "y1", "dash": "longdash",    "numerator": "none",                             "divisor": "none"},
-  "subs_per_trial":                   {"name":"Subs/Trial",       "symbol": "%",   "highlight_revenue_cutoff_date": true,    "stack_group": "none",      "yaxis": "y2", "dash": "dash",        "numerator": "ltv_subs_all",                     "divisor": "trial_starts_all"},
-  "ltv_subs_revenue":                 {"name":"App Sub REV",      "symbol": "$",   "highlight_revenue_cutoff_date": true,    "stack_group": "REVENUE",   "yaxis": "y1", "dash": "longdash",    "numerator": "none",                             "divisor": "none"},
-  "roas":                             {"name":"ROAS: App Subs",   "symbol": "%",   "highlight_revenue_cutoff_date": true,    "stack_group": "none",      "yaxis": "y4", "dash": "dash",        "numerator": ["ltv_subs_revenue"],               "divisor": "spend"},
-  "ltv_premium_membership_all":       {"name":"Web Subs",         "symbol": "",    "highlight_revenue_cutoff_date": true,    "stack_group": "PAYERS",    "yaxis": "y1", "dash": "dashdot",     "numerator": "none",                             "divisor": "none"},
-  "ltv_premium_membership_revenue":   {"name":"Web Sub Rev",      "symbol": "$",   "highlight_revenue_cutoff_date": true,    "stack_group": "REVENUE",   "yaxis": "y1", "dash": "dashdot",     "numerator": "none",                             "divisor": "none"},
-  "ltv_text_chat_all":                {"name":"Chat 1:1 Subs",    "symbol": "",    "highlight_revenue_cutoff_date": true,    "stack_group": "PAYERS",    "yaxis": "y1", "dash": "dash",        "numerator": "none",                             "divisor": "none"},
-  "ltv_text_chat_revenue":            {"name":"Chat 1:1 Rev",     "symbol": "$",   "highlight_revenue_cutoff_date": true,    "stack_group": "REVENUE",   "yaxis": "y1", "dash": "dash",        "numerator": "none",                             "divisor": "none"},  
-  "total_roas":                       {"name":"ROAS: TOTAL",      "symbol": "%",   "highlight_revenue_cutoff_date": true,    "stack_group": "none",      "yaxis": "y4", "dash": "dash",        "numerator": ["ltv_subs_revenue",
-                                                                                                                                                                                                           "ltv_premium_membership_revenue",
-                                                                                                                                                                                                           "ltv_text_chat_revenue"],            "divisor": "spend"},
-  "total_roas_gc":                    {"name":"ROAS: TOT+GC",     "symbol": "%",   "highlight_revenue_cutoff_date": true,    "stack_group": "none",      "yaxis": "y4", "dash": "dash",        "numerator": ["ltv_subs_revenue",
-                                                                                                                                                                                                           "ltv_premium_membership_revenue",
-                                                                                                                                                                                                           "ltv_text_chat_revenue",
-                                                                                                                                                                                                           "gc_revenue"],                       "divisor": "spend"},  
-  "yaxis_placeholder":                {"name":"y1",               "symbol": "",    "highlight_revenue_cutoff_date": false,   "stack_group": "none",      "yaxis": "y1", "dash": "longdash",    "numerator": "none",                             "divisor": "none"}
+  "spend":                            {"name":"Spend",            "symbol": "$",   "highlight_revenue_cutoff_date": false,   "stack_group": "default",   "yaxis": "y1",   "use_for_organic": false, "dash": "solid",       "numerator": "none",                             "divisor": "none"},
+  "installs":                         {"name":"Installs",         "symbol": "",    "highlight_revenue_cutoff_date": false,   "stack_group": "default",   "yaxis": "y1",   "use_for_organic": true,  "dash": "longdash",    "numerator": "none",                             "divisor": "none"},
+  "cpi":                              {"name":"CPI",              "symbol": "$",   "highlight_revenue_cutoff_date": false,   "stack_group": "none",      "yaxis": "y2",   "use_for_organic": false, "dash": "dashdot",     "numerator": "spend",                            "divisor": "installs"},
+  "arpu":                             {"name":"ARPU",             "symbol": "$",   "highlight_revenue_cutoff_date": true,    "stack_group": "none",      "yaxis": "y2",   "use_for_organic": false, "dash": "dot",         "numerator": "ltv_subs_revenue",                 "divisor": "installs"},
+  "trial_starts_all":                 {"name":"Trial Starts",     "symbol": "",    "highlight_revenue_cutoff_date": false,   "stack_group": "default",   "yaxis": "y1",   "use_for_organic": true,  "dash": "longdash",    "numerator": "none",                             "divisor": "none"},
+  "cpt":                              {"name":"CPT",              "symbol": "$",   "highlight_revenue_cutoff_date": false,   "stack_group": "none",      "yaxis": "y2",   "use_for_organic": false, "dash": "dashdot",     "numerator": "spend",                            "divisor": "trial_starts_all"},
+  "arp_trial":                        {"name":"ARP Trial",        "symbol": "$",   "highlight_revenue_cutoff_date": true,    "stack_group": "none",      "yaxis": "y2",   "use_for_organic": false, "dash": "dot",         "numerator": "ltv_subs_revenue",                 "divisor": "trial_starts_all"},
+  "trials_per_user":                  {"name":"Trials/Inst",      "symbol": "%",   "highlight_revenue_cutoff_date": false,   "stack_group": "none",      "yaxis": "y2",   "use_for_organic": true,  "dash": "dot",         "numerator": "trial_starts_all",                 "divisor": "installs"},
+  "ltv_subs_all":                     {"name":"App Subs",         "symbol": "",    "highlight_revenue_cutoff_date": true,    "stack_group": "PAYERS",    "yaxis": "y1",   "use_for_organic": false, "dash": "longdash",    "numerator": "none",                             "divisor": "none"},
+  "subs_per_trial":                   {"name":"Subs/Trial",       "symbol": "%",   "highlight_revenue_cutoff_date": true,    "stack_group": "none",      "yaxis": "y2",   "use_for_organic": false, "dash": "dash",        "numerator": "ltv_subs_all",                     "divisor": "trial_starts_all"},
+  "ltv_subs_revenue":                 {"name":"App Sub REV",      "symbol": "$",   "highlight_revenue_cutoff_date": true,    "stack_group": "REVENUE",   "yaxis": "y1",   "use_for_organic": false, "dash": "longdash",    "numerator": "none",                             "divisor": "none"},
+  "roas":                             {"name":"ROAS: App Subs",   "symbol": "%",   "highlight_revenue_cutoff_date": true,    "stack_group": "none",      "yaxis": "y4",   "use_for_organic": false, "dash": "dash",        "numerator": ["ltv_subs_revenue"],               "divisor": "spend"},
+  "ltv_premium_membership_all":       {"name":"Web Subs",         "symbol": "",    "highlight_revenue_cutoff_date": true,    "stack_group": "PAYERS",    "yaxis": "y1",   "use_for_organic": false, "dash": "dashdot",     "numerator": "none",                             "divisor": "none"},
+  "ltv_premium_membership_revenue":   {"name":"Web Sub Rev",      "symbol": "$",   "highlight_revenue_cutoff_date": true,    "stack_group": "REVENUE",   "yaxis": "y1",   "use_for_organic": false, "dash": "dashdot",     "numerator": "none",                             "divisor": "none"},
+  "ltv_text_chat_all":                {"name":"Chat 1:1 Subs",    "symbol": "",    "highlight_revenue_cutoff_date": true,    "stack_group": "PAYERS",    "yaxis": "y1",   "use_for_organic": false, "dash": "dash",        "numerator": "none",                             "divisor": "none"},
+  "ltv_text_chat_revenue":            {"name":"Chat 1:1 Rev",     "symbol": "$",   "highlight_revenue_cutoff_date": true,    "stack_group": "REVENUE",   "yaxis": "y1",   "use_for_organic": false, "dash": "dash",        "numerator": "none",                             "divisor": "none"},  
+  "total_roas":                       {"name":"ROAS: TOTAL",      "symbol": "%",   "highlight_revenue_cutoff_date": true,    "stack_group": "none",      "yaxis": "y4",   "use_for_organic": false, "dash": "dash",        "numerator": ["ltv_subs_revenue",
+                                                                                                                                                                                                                                         "ltv_premium_membership_revenue",
+                                                                                                                                                                                                                                         "ltv_text_chat_revenue"],          "divisor": "spend"},
+  "total_roas_gc":                    {"name":"ROAS: TOT+GC",     "symbol": "%",   "highlight_revenue_cutoff_date": true,    "stack_group": "none",      "yaxis": "y4",   "use_for_organic": false, "dash": "dash",        "numerator": ["ltv_subs_revenue",
+                                                                                                                                                                                                                                         "ltv_premium_membership_revenue",
+                                                                                                                                                                                                                                         "ltv_text_chat_revenue",
+                                                                                                                                                                                                                                         "gc_revenue"],                     "divisor": "spend"},  
+  "yaxis_placeholder":                {"name":"y1",               "symbol": "",    "highlight_revenue_cutoff_date": false,   "stack_group": "none",      "yaxis": "y1",   "use_for_organic": false, "dash": "longdash",    "numerator": "none",                             "divisor": "none"}
 };
 
 
@@ -302,6 +313,10 @@ function lineChartWithMetricsChoices() {
     for(j=0; j < metrics_chosen.length; j++){
 
       let metric = metrics_chosen[j];
+
+      // if the advertiser is "Organic" and the metric is not one of the metrics
+      // that we have data on for Organic installers, then skip this loop
+      if (advertiser === "Organic" && !metrics_info[metric].use_for_organic) continue;
       
       let trace = {
         x: getOvertimeGraphXValues(tempChartData, "date", advertiser),
